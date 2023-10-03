@@ -1,0 +1,2 @@
+Ruota,20
+Sportello,10
