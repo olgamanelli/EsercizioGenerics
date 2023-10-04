@@ -1,8 +1,12 @@
 package main;
 
+import main.enums.TipiPezzi;
+
 public class Ruota extends Pezzo{
 
-		public Ruota(String nome) {
-			super(nome);
+		//attributi
+		
+		public Ruota() {
+			super(TipiPezzi.Ruota);
 		}
 }

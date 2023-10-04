@@ -11,21 +11,7 @@ public class Veicolo {
 		private List<Ruota> listaRuote;
 		private List<Sportello> listaSportelli;
 		
-		public List<Ruota> getListaRuote() {
-			return listaRuote;
-		}
-
-		public void setListaRuote(List<Ruota> listaRuote) {
-			this.listaRuote = listaRuote;
-		}
-
-		public List<Sportello> getListaSportelli() {
-			return listaSportelli;
-		}
-
-		public void setListaSportelli(List<Sportello> listaSportelli) {
-			this.listaSportelli = listaSportelli;
-		}
+	
 
 		//costruttore
 		public Veicolo(int ruote, int sportelli) {
@@ -57,6 +43,21 @@ public class Veicolo {
 			this.isBuilt = isBuilt;
 		}
 		
+		public List<Ruota> getListaRuote() {
+			return listaRuote;
+		}
+
+		public void setListaRuote(List<Ruota> listaRuote) {
+			this.listaRuote = listaRuote;
+		}
+
+		public List<Sportello> getListaSportelli() {
+			return listaSportelli;
+		}
+
+		public void setListaSportelli(List<Sportello> listaSportelli) {
+			this.listaSportelli = listaSportelli;
+		}
 		
 		
 		

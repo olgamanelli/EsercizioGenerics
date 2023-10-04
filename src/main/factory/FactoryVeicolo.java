@@ -1,11 +1,12 @@
 package main.factory;
 
 import main.Veicolo;
+import main.VeicoloSconosciutoException;
+import main.SportelliSbagliatiException;
 import main.Auto;
 import main.Camion;
 import main.Moto;
-import main.Ruota;
-import main.Sportello;
+import main.enums.TipiVeicoli;
 
 /**
  * Factory per istanziare un Veicolo
@@ -14,26 +15,30 @@ import main.Sportello;
  */
 public class FactoryVeicolo {
 	
-	//costruttore statico
+	//Costruttore statico
 	/**
 	 * 
-	 * @param nomeVeicolo, stringa che dice il nome del Veicolo
-	 * @return il Veicolo (Ruota o Sportello) con il nome nomeVeicolo
-	 * @throws Exception
+	 * @param nomeVeicolo
+	 * @param sportello
+	 * @param ruote
+	 * @return
+	 * @throws VeicoloSconosciutoException
+	 * @throws SportelliSbagliatiException
 	 */
-	public static Veicolo getVeicoloFromString(String nomeVeicolo, int sportello, int ruote) throws Exception {
+	public static Veicolo getVeicoloFromString(TipiVeicoli nomeVeicolo, int sportello, int ruote)  
+			throws VeicoloSconosciutoException, SportelliSbagliatiException {
 		
 		switch(nomeVeicolo) {
-			case "Auto": {
+			case AUTO: {
 				return new Auto(sportello);
 			}
-			case "Moto": {
+			case Moto: {
 				return new Moto();
 			}
-			case "Camion":{
+			case Camion:{
 				return new Camion(ruote, sportello);
 			}
-			default: throw new Exception("Non esiste un Veicolo di questo tipo oooooooooooh!!!");
+			default: throw new VeicoloSconosciutoException("Non esiste un Veicolo di questo tipo!");
 		}
 	}
 }

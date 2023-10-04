@@ -1,2 +1,2 @@
-Ruota,20
-Sportello,10
+Ruota,26
+Sportello,36

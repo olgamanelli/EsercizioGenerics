@@ -2,12 +2,12 @@ package main;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import main.enums.*;
 import main.factory.FactoryVeicolo;
 
 public class CatenaMontaggio<T extends Veicolo> {
 	
-	//attributo
+	//attributi
 	private List<Robot> listaRobot;
 	
 	//costruttore
@@ -18,43 +18,56 @@ public class CatenaMontaggio<T extends Veicolo> {
 	
 	/**
 	 * 
-	 * @param listaPezziDisponibili, lista dei pezzi a disposizione, da modificare una volta costruito veicolo
-	 * @param ruote, numero ruote del veicolo da costruire
-	 * @param sportelli, numero sportelli del veicolo da costruire
-	 * @param nomeVeicolo
-	 * @return T, veicolo costruito
-	 * @throws Exception
+	 * @param listaPezziDisponibili
+	 * @param ruote
+	 * @param sportelli
+	 * @param tipoVeicolo
+	 * @return T, veicolo creato
+	 * @throws PezziTerminatiException
+	 * @throws VeicoloSconosciutoException
+	 * @throws PezzoSconosciutoException
+	 * @throws SportelliSbagliatiException
 	 */
-	public T apply(List<PezzoQuantita> listaPezziDisponibili, int ruote, int sportelli, String nomeVeicolo) throws Exception {
+	public T apply(List<PezzoQuantita> listaPezziDisponibili, int ruote, int sportelli, TipiVeicoli tipoVeicolo) 
+			throws PezziTerminatiException, VeicoloSconosciutoException, PezzoSconosciutoException, SportelliSbagliatiException {
 		
-		T veicolo = (T) FactoryVeicolo.getVeicoloFromString(nomeVeicolo, sportelli, ruote);
+		//Crea veicolo
+		T veicolo = (T) FactoryVeicolo.getVeicoloFromString(tipoVeicolo, sportelli, ruote);
+
+		//Si aggiorna la lista dei pezzi disponibili, togliendo quelli usati per la costruzione del veicolo
 		for(PezzoQuantita pezzoQuantita : listaPezziDisponibili) {
 			
-			if(pezzoQuantita.getPezzo().getNome().equals("Ruota")) {
+			if(pezzoQuantita.getPezzo() instanceof Ruota) {
 				pezzoQuantita.setQuantita(pezzoQuantita.getQuantita()-veicolo.getNumeroRuote());
-			} else if(pezzoQuantita.getPezzo().getNome().equals("Sportello")){
+				if(pezzoQuantita.getQuantita() < 0) {
+					throw new PezziTerminatiException("Errore: Sono terminate le ruote a disposizione!");
+				}
+			} else if(pezzoQuantita.getPezzo() instanceof Sportello){
 				pezzoQuantita.setQuantita(pezzoQuantita.getQuantita()-veicolo.getNumeroSportelli());
+				if(pezzoQuantita.getQuantita() < 0) {
+					throw new PezziTerminatiException("Errore: Sono terminati gli sportelli a disposizione!");
+				}
 			}
 		}
 		
-		//TODO: devo costruire il veicolo
 		
-		//al robot dico quantità di pezzi e nome pezzo e gli faccio costruire il veicolo, ritrona una lista dei pezzi costruiti
-		
+		//Si scorre la lista dei robot, ogni robot costruisce una certa quantita di un certo pezzo
+		//Si aggiornano listaRuote e listaSportelli
 		for(int i=0; i<listaRobot.size(); i++) {
-			
-			if(listaRobot.get(i).getNomePezzo().equals("Ruota")) {
+			if(listaRobot.get(i).getTipoPezzo().equals(TipiPezzi.Ruota)) {
 				List<Ruota> listaRuote = new ArrayList<>();
-				listaRuote = listaRobot.get(i).apply(ruote, "Ruota");
+				listaRuote = listaRobot.get(i).apply(ruote, TipiPezzi.Ruota);
 				veicolo.setListaRuote(listaRuote);
-			} else if(listaRobot.get(i).getNomePezzo().equals("Sportello")){
+			} else if(listaRobot.get(i).getTipoPezzo().equals(TipiPezzi.Sportello)){
 				List<Sportello> listaSportelli = new ArrayList<>();
-				listaSportelli = listaRobot.get(i).apply(sportelli, "Sportello");
+				listaSportelli = listaRobot.get(i).apply(sportelli, TipiPezzi.Sportello);
 				veicolo.setListaSportelli(listaSportelli);	
+			} else {
+				throw new PezzoSconosciutoException("Questo pezzo non esiste!");
 			}
 		}
 		
-		// se tutto ok metto isBuilt = true nel veicolo
+		// se tutto ok si mette isBuilt = true nel veicolo
 			if(veicolo.getListaSportelli().size() == veicolo.getNumeroSportelli() &&
 					veicolo.getListaRuote().size() == veicolo.getNumeroRuote() ) {
 				veicolo.setBuilt(true);

@@ -1,8 +1,10 @@
 package main.factory;
 
 import main.Pezzo;
+import main.PezzoSconosciutoException;
 import main.Ruota;
 import main.Sportello;
+import main.enums.TipiPezzi;
 
 /**
  * Factory per istanziare un pezzo
@@ -14,20 +16,21 @@ public class FactoryPezzo {
 	//costruttore statico
 	/**
 	 * 
-	 * @param nomePezzo, stringa che dice il nome del pezzo
-	 * @return il Pezzo (Ruota o Sportello) con il nome nomePezzo
-	 * @throws Exception
+	 * @param tipoPezzo
+	 * @return
+	 * @throws PezzoSconosciutoException
 	 */
-	public static Pezzo getPezzoFromString(String nomePezzo) throws Exception {
+	
+	public static Pezzo getPezzoFromString(TipiPezzi tipoPezzo) throws PezzoSconosciutoException {
 		
-		switch(nomePezzo) {
-			case "Ruota": {
-				return new Ruota(nomePezzo);
+		switch(tipoPezzo) {
+			case Ruota: {
+				return new Ruota();
 			}
-			case "Sportello": {
-				return new Sportello(nomePezzo);
+			case Sportello: {
+				return new Sportello();
 			}
-			default: throw new Exception("Non esiste un pezzo di questo tipo oooooooooooh!!!");
+			default: throw new PezzoSconosciutoException("Non esiste un pezzo di questo tipo!");
 		}
 	}
 }

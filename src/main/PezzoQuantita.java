@@ -2,18 +2,17 @@ package main;
 
 public class PezzoQuantita {
 
+		//Attributi
 		private Pezzo pezzo;
 		private int quantita;
 		
-		//costruttore
-		
+		//Costruttore
 		public PezzoQuantita(Pezzo pezzo, int quantita){
-			
 			this.pezzo=pezzo;
 			this.quantita=quantita;
-			
 		}
 
+		//Getters e Setters 
 		public Pezzo getPezzo() {
 			return pezzo;
 		}
@@ -29,7 +28,4 @@ public class PezzoQuantita {
 		public void setQuantita(int quantita) {
 			this.quantita = quantita;
 		}
-		
-		
-		
 }

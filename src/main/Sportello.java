@@ -1,9 +1,11 @@
 package main;
 
+import main.enums.TipiPezzi;
+
 public class Sportello extends Pezzo {
-		
-	public Sportello(String nomePezzo) {
-		super(nomePezzo);
+	
+	public Sportello() {
+		super(TipiPezzi.Sportello);
 	}
 
 }
