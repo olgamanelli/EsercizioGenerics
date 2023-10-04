@@ -32,12 +32,16 @@ public class CatenaMontaggio<T extends Veicolo>  {
 	 * @throws SportelliSbagliatiException
 	 */
 	
-	public T apply(List<PezzoQuantita> listaPezziDisponibili, int ruote, int sportelli, TipiVeicoli tipoVeicolo) 
+	public void apply(List<PezzoQuantita> listaPezziDisponibili, Veicolo veicolo, TipiVeicoli tipoVeicolo) 
 			throws VeicoloSconosciutoException, PezzoSconosciutoException, SportelliSbagliatiException, PezziTerminatiException {
 		
+		if(veicolo.getBuilt()) {
+			System.out.println("Il veicolo è gia costruito");
+		} else {
 		//Crea veicolo
-		T veicolo = (T) FactoryVeicolo.getVeicoloFromTipo(tipoVeicolo, sportelli, ruote);
+//		T veicolo = (T) FactoryVeicolo.getVeicoloFromTipo(tipoVeicolo, sportelli, ruote);
 
+		
 		//Si aggiorna la lista dei pezzi disponibili, togliendo quelli usati per la costruzione del veicolo
 		
 		for(PezzoQuantita pezzoQuantita : listaPezziDisponibili) {
@@ -63,11 +67,11 @@ public class CatenaMontaggio<T extends Veicolo>  {
 		for(int i=0; i<listaRobot.size(); i++) {
 			if(listaRobot.get(i).getTipoPezzo().equals(TipiPezzi.Ruota)) {
 				List<Ruota> listaRuote = new ArrayList<>();
-				listaRuote = listaRobot.get(i).apply(ruote, TipiPezzi.Ruota);
+				listaRuote = listaRobot.get(i).apply(veicolo.getNumeroRuote(), TipiPezzi.Ruota);
 				veicolo.setListaRuote(listaRuote);
 			} else if(listaRobot.get(i).getTipoPezzo().equals(TipiPezzi.Sportello)){
 				List<Sportello> listaSportelli = new ArrayList<>();
-				listaSportelli = listaRobot.get(i).apply(sportelli, TipiPezzi.Sportello);
+				listaSportelli = listaRobot.get(i).apply(veicolo.getNumeroSportelli(), TipiPezzi.Sportello);
 				veicolo.setListaSportelli(listaSportelli);	
 			} else {
 				throw new PezzoSconosciutoException("Questo pezzo non esiste!");
@@ -76,12 +80,20 @@ public class CatenaMontaggio<T extends Veicolo>  {
 		
 		// se tutto ok si mette isBuilt = true nel veicolo
 			if(veicolo.getListaSportelli().size() == veicolo.getNumeroSportelli() &&
-					veicolo.getListaRuote().size() == veicolo.getNumeroRuote() ) {
+					veicolo.getListaRuote().size() == veicolo.getNumeroRuote() ) { 
+				if(veicolo.getBuilt()) {
+					for(PezzoQuantita pezzoQuantita : listaPezziDisponibili) {
+						
+						if(pezzoQuantita.getPezzo() instanceof Ruota) {
+							pezzoQuantita.setQuantita(pezzoQuantita.getQuantita()+veicolo.getNumeroRuote());
+						} else if(pezzoQuantita.getPezzo() instanceof Sportello){
+							pezzoQuantita.setQuantita(pezzoQuantita.getQuantita()+veicolo.getNumeroSportelli());
+						}
+					}
+					
+				}
 				veicolo.setBuilt(true);
 			}
-			
-		return veicolo;
+		}
 	}
-	
-	
 }

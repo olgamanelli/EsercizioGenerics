@@ -10,7 +10,7 @@ public class Veicolo {
 		//attributi
 		private int numeroRuote;
 		private int numeroSportelli;
-		private boolean isBuilt = false;
+		private volatile boolean  isBuilt = false;
 		private List<Ruota> listaRuote;
 		private List<Sportello> listaSportelli;
 		
@@ -38,7 +38,7 @@ public class Veicolo {
 			this.numeroSportelli = numeroSportelli;
 		}
 
-		public boolean getBuilt() {
+		public synchronized boolean getBuilt() {
 			return isBuilt;
 		}
 

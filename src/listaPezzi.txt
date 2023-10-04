@@ -1,2 +1,2 @@
-Ruota,50
-Sportello,50
+Ruota,454
+Sportello,472
