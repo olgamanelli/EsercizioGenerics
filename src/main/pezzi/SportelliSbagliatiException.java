@@ -1,4 +1,4 @@
-package main;
+package main.pezzi;
 
 public class SportelliSbagliatiException extends Exception {
 	

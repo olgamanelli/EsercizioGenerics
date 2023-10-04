@@ -1,11 +1,11 @@
-package main;
+package main.veicoli;
 
 import main.enums.TipiVeicoli;
 
 public class Camion extends Veicolo {
 
 		//istanze
-		private final TipiVeicoli tipo = TipiVeicoli.Camion;
+		private final TipiVeicoli tipo = TipiVeicoli.CAMION;
 	
 		//costruttori
 		public Camion(int ruote, int sportelli) {
@@ -13,6 +13,6 @@ public class Camion extends Veicolo {
 			}
 		
 		public TipiVeicoli getTipoVeicolo() {
-			return TipiVeicoli.Camion;
+			return TipiVeicoli.CAMION;
 		}
 }

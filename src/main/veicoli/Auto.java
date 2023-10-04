@@ -1,5 +1,6 @@
-package main;
+package main.veicoli;
 import main.enums.TipiVeicoli;
+import main.pezzi.SportelliSbagliatiException;
 
 public class Auto extends Veicolo{
 

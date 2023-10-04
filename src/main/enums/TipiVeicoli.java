@@ -2,8 +2,8 @@ package main.enums;
 
 public enum TipiVeicoli {
 	AUTO("Fiat"),
-	Moto("Yamaha"),
-	Camion("DittaTraslocchi");
+	MOTO("Yamaha"),
+	CAMION("DittaTraslocchi");
 	
 	private String nome;
 	

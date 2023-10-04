@@ -1,10 +1,10 @@
 package main.factory;
 
-import main.Pezzo;
-import main.PezzoSconosciutoException;
-import main.Ruota;
-import main.Sportello;
 import main.enums.TipiPezzi;
+import main.pezzi.Pezzo;
+import main.pezzi.PezzoSconosciutoException;
+import main.pezzi.Ruota;
+import main.pezzi.Sportello;
 
 /**
  * Factory per istanziare un pezzo
@@ -21,7 +21,7 @@ public class FactoryPezzo {
 	 * @throws PezzoSconosciutoException
 	 */
 	
-	public static Pezzo getPezzoFromString(TipiPezzi tipoPezzo) throws PezzoSconosciutoException {
+	public static Pezzo getPezzoFromTipo(TipiPezzi tipoPezzo) throws PezzoSconosciutoException {
 		
 		switch(tipoPezzo) {
 			case Ruota: {

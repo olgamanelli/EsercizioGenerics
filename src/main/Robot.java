@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import main.enums.*;
 import main.factory.FactoryPezzo;
+import main.pezzi.Pezzo;
+import main.pezzi.PezzoSconosciutoException;
 
 public class Robot<T extends Pezzo>{
 	
@@ -32,7 +34,7 @@ public class Robot<T extends Pezzo>{
 		List<T> pezziCostruiti = new ArrayList<T>();
 		
 		for(int i=0; i<quantita; i++) {
-			T pezzo = (T) FactoryPezzo.getPezzoFromString(tipoPezzo);
+			T pezzo = (T) FactoryPezzo.getPezzoFromTipo(tipoPezzo);
 			pezziCostruiti.add(pezzo);
 		}
 		

@@ -1,11 +1,11 @@
-package main;
+package main.veicoli;
 
 import main.enums.TipiVeicoli;
 
 public class Moto extends Veicolo {
 	
 	//istanze
-	private final TipiVeicoli tipo = TipiVeicoli.Moto;
+	private final TipiVeicoli tipo = TipiVeicoli.MOTO;
 	
 	//costruttori
 	public Moto() {
@@ -13,7 +13,7 @@ public class Moto extends Veicolo {
 	}
 	
 	public TipiVeicoli getTipoVeicolo() {
-		return TipiVeicoli.Moto;
+		return TipiVeicoli.MOTO;
 	}
 
 }

@@ -1,11 +1,14 @@
 package main;
 
-import java.util.ArrayList;
 import java.util.List;
-import main.enums.*;
-import main.factory.FactoryVeicolo;
+import java.util.ArrayList;
 
-public class CatenaMontaggio<T extends Veicolo> {
+import main.enums.*;
+import main.factory.*;
+import main.pezzi.*;
+import main.veicoli.*;
+
+public class CatenaMontaggio<T extends Veicolo>  {
 	
 	//attributi
 	private List<Robot> listaRobot;
@@ -28,13 +31,15 @@ public class CatenaMontaggio<T extends Veicolo> {
 	 * @throws PezzoSconosciutoException
 	 * @throws SportelliSbagliatiException
 	 */
+	
 	public T apply(List<PezzoQuantita> listaPezziDisponibili, int ruote, int sportelli, TipiVeicoli tipoVeicolo) 
-			throws PezziTerminatiException, VeicoloSconosciutoException, PezzoSconosciutoException, SportelliSbagliatiException {
+			throws VeicoloSconosciutoException, PezzoSconosciutoException, SportelliSbagliatiException, PezziTerminatiException {
 		
 		//Crea veicolo
-		T veicolo = (T) FactoryVeicolo.getVeicoloFromString(tipoVeicolo, sportelli, ruote);
+		T veicolo = (T) FactoryVeicolo.getVeicoloFromTipo(tipoVeicolo, sportelli, ruote);
 
 		//Si aggiorna la lista dei pezzi disponibili, togliendo quelli usati per la costruzione del veicolo
+		
 		for(PezzoQuantita pezzoQuantita : listaPezziDisponibili) {
 			
 			if(pezzoQuantita.getPezzo() instanceof Ruota) {
@@ -53,6 +58,8 @@ public class CatenaMontaggio<T extends Veicolo> {
 		
 		//Si scorre la lista dei robot, ogni robot costruisce una certa quantita di un certo pezzo
 		//Si aggiornano listaRuote e listaSportelli
+		
+
 		for(int i=0; i<listaRobot.size(); i++) {
 			if(listaRobot.get(i).getTipoPezzo().equals(TipiPezzi.Ruota)) {
 				List<Ruota> listaRuote = new ArrayList<>();
@@ -75,5 +82,6 @@ public class CatenaMontaggio<T extends Veicolo> {
 			
 		return veicolo;
 	}
+	
 	
 }

@@ -1,6 +1,9 @@
-package main;
+package main.veicoli;
 
 import java.util.List;
+
+import main.pezzi.Ruota;
+import main.pezzi.Sportello;
 
 public class Veicolo {
 

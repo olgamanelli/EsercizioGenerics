@@ -1,26 +1,43 @@
 package main;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import main.constant.Constant;
 import main.enums.TipiPezzi;
+import main.enums.TipiVeicoli;
 import main.factory.FactoryPezzo;
+import main.pezzi.PezziTerminatiException;
+import main.pezzi.Pezzo;
+import main.pezzi.PezzoQuantita;
+import main.pezzi.PezzoSconosciutoException;
+import main.pezzi.Ruota;
+import main.pezzi.SportelliSbagliatiException;
+import main.pezzi.Sportello;
+import main.veicoli.Auto;
+import main.veicoli.Camion;
+import main.veicoli.Moto;
+import main.veicoli.Veicolo;
+import main.veicoli.VeicoloSconosciutoException;
 
 /**
  * Programma che testa il funzionamento delle classi Pezzo, Veicolo e delle sottoclassi
  * @author Manelli
  *
  */
-public class TestGenerics {
+public class TestGenerics  {
 
 	/**
 	 * Nel main viene letto un file con pezzi e quantità disponibili, che vengono assegnati ai veicoli creati
@@ -28,8 +45,47 @@ public class TestGenerics {
 	 * @param args
 	 * @throws Exception
 	 */
+	
+	//Classe thread
+	public static class MyThread extends Thread{
+		
+		//attributi
+		private CatenaMontaggio catena;
+		private  List<PezzoQuantita> listaPezzi;
+		private Veicolo veicolo;
+		private TipiVeicoli tipoVeicolo;
+		
+		//costruttore
+		public MyThread(CatenaMontaggio catena, List<PezzoQuantita> listaPezzi, Veicolo veicolo, TipiVeicoli tipoVeicolo) {
+			this.catena=catena;
+			this.listaPezzi=listaPezzi;
+			this.veicolo = veicolo;
+			this.tipoVeicolo=tipoVeicolo;
+		}
+		
+		@Override
+		public void run() {
+			//Oggetto a cui si vuole che i thread non accedano contemporaneamente --> synchronized
+			synchronized (this.listaPezzi) {
+				try {
+						veicolo = this.catena.apply(this.listaPezzi, this.veicolo.getNumeroRuote(), 
+								  this.veicolo.getNumeroSportelli(), this.tipoVeicolo);
+						this.listaPezzi.stream().forEach(pezzoQuantita -> {
+						System.out.println("thread secondario per "+ this.tipoVeicolo + " - " + 
+								            pezzoQuantita.getPezzo().getTipoPezzo() + " " + pezzoQuantita.getQuantita() );
+						});
+				} catch (VeicoloSconosciutoException | PezzoSconosciutoException | SportelliSbagliatiException
+					| PezziTerminatiException e) {
+				// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("finito thread per " + this.tipoVeicolo);
+			}
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
-
+		
 		//Creazione lista pezzi disponibili
 		List<PezzoQuantita> listaPezzi = new ArrayList<>();
 		
@@ -41,12 +97,11 @@ public class TestGenerics {
 			System.out.println("Non sono risucito a caricare nessun pezzo."); //TODO creare eccezione
 		}
 		else {
-			for(PezzoQuantita pezzoQuantita : listaPezzi) {
+			listaPezzi.stream().forEach(pezzoQuantita -> {
 				System.out.println(pezzoQuantita.getPezzo().getTipoPezzo() + " " + pezzoQuantita.getQuantita() );
-			}
+			});
 		}
 		
-
 		//Creazione lista dei robot
 		List<Robot> listaRobot = new ArrayList<>();
 		Robot<Ruota> robotRuote = new Robot<Ruota>(TipiPezzi.Ruota);
@@ -58,6 +113,23 @@ public class TestGenerics {
 		CatenaMontaggio<Auto> catenaMontaggioAuto = new CatenaMontaggio<Auto>(listaRobot);
 		CatenaMontaggio<Moto> catenaMontaggioMoto = new CatenaMontaggio<Moto>(listaRobot);
 		CatenaMontaggio<Camion> catenaMontaggioCamion = new CatenaMontaggio<Camion>(listaRobot);
+		
+		//Creazione veicoli
+		Auto auto = new Auto(2);
+		Moto moto = new Moto();
+		Camion camion = new Camion(4,4);
+		
+		//Creazione threadpool con core size = 3
+		ExecutorService executor = Executors.newFixedThreadPool(3);
+		
+		//Creazione e inserimento dei thread nel threadpool + esecuzione
+		executor.submit(new  MyThread(catenaMontaggioAuto, listaPezzi, auto, auto.getTipoVeicolo()));
+		executor.submit(new  MyThread(catenaMontaggioMoto, listaPezzi, moto, moto.getTipoVeicolo() ));
+		executor.submit(new  MyThread(catenaMontaggioCamion, listaPezzi, camion, camion.getTipoVeicolo()));
+		
+		//Shutdown del threadpool
+		executor.shutdown();
+		
 		
 		/**
 		 * TODO
@@ -86,37 +158,32 @@ public class TestGenerics {
 		 * CONCORRENZA
 		 * sfruttiamo stream (no for)
 		 */
+
 		
-		//Costruzione dei veicoli usando catene di montaggio
-		Auto auto = new Auto(2);
-		auto = catenaMontaggioAuto.apply(listaPezzi, auto.getNumeroRuote(), auto.getNumeroSportelli(), auto.getTipoVeicolo());
-		Moto moto = new Moto();
-		moto = catenaMontaggioMoto.apply(listaPezzi, moto.getNumeroRuote(), moto.getNumeroSportelli(), moto.getTipoVeicolo());
-		Camion camion = new Camion(8,2);
-		camion = catenaMontaggioCamion.apply(listaPezzi, camion.getNumeroRuote(), camion.getNumeroSportelli(), camion.getTipoVeicolo());
+		//Check: se dopo lo shutdown le operazioni si sono concluse abbastanza velocemente, aggiorno file
+		if(executor.awaitTermination(2, TimeUnit.SECONDS)) {
+			listaPezzi.stream().forEach(pezzoQuantita -> {
+				System.out.println("main thread: " + pezzoQuantita.getPezzo().getTipoPezzo() + " " + pezzoQuantita.getQuantita() );
+			});
 		
-		//Check
-		for(PezzoQuantita pezzoQuantita : listaPezzi) {
-			System.out.println(pezzoQuantita.getPezzo().getTipoPezzo() + " " + pezzoQuantita.getQuantita() );
-		}
-		
-		//Aggiornamento file txt
+			//Aggiornamento file txt
 	
-		Path path = Paths.get(Constant.PATH_READER);
-		//Cancella file e ne crea uno nuovo con lo stesso nome
-		Files.deleteIfExists(path);
-		Files.createFile(path);
-		//Scrive su nuovo file le nuove info
-		FileWriter fw = new FileWriter(Constant.PATH_READER, true);
-		BufferedWriter bw = new BufferedWriter(fw);
-		PrintWriter pw = new PrintWriter(bw);
+			Path path = Paths.get(Constant.PATH_READER);
+			//Cancella file e ne crea uno nuovo con lo stesso nome
+			Files.deleteIfExists(path);
+			Files.createFile(path);
+			//Scrive su nuovo file le nuove info
+			FileWriter fw = new FileWriter(Constant.PATH_READER, true);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter pw = new PrintWriter(bw);
 		
-		for(PezzoQuantita pezzoQuantita : listaPezzi) {
-			pw.println(pezzoQuantita.getPezzo().getTipoPezzo() + "," + pezzoQuantita.getQuantita() );
+			listaPezzi.stream().forEach(pezzoQuantita -> {
+				pw.println(pezzoQuantita.getPezzo().getTipoPezzo() + "," + pezzoQuantita.getQuantita() );
+			});
+
+			//Si chiude la print writer
+			pw.close();
 		}
-	
-		pw.close();
-		
 	}
 	
 	/**
@@ -149,7 +216,7 @@ public class TestGenerics {
 				
 				//Si trasforma il nome del pezzo nel pezzo vero e proprio tramite la classe FactoryPezzo
 				// (non si pu istanziare direttamente un pezzo perchè classe astratta)
-				Pezzo pezzo = FactoryPezzo.getPezzoFromString(tipoPezzo);
+				Pezzo pezzo = FactoryPezzo.getPezzoFromTipo(tipoPezzo);
 				
 				//Si crea il il PezzoQuantita e si aggiunge nella lista listpezzi
 				PezzoQuantita pezzoquantita = new PezzoQuantita(pezzo, quantita);

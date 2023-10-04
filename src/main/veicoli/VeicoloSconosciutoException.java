@@ -1,4 +1,4 @@
-package main;
+package main.veicoli;
 
 public class VeicoloSconosciutoException extends Exception {
 

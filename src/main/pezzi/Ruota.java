@@ -1,4 +1,4 @@
-package main;
+package main.pezzi;
 
 import main.enums.TipiPezzi;
 
