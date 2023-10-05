@@ -13,6 +13,7 @@ public class Veicolo {
 		private volatile boolean  isBuilt = false;
 		private List<Ruota> listaRuote;
 		private List<Sportello> listaSportelli;
+
 		
 	
 
@@ -42,7 +43,7 @@ public class Veicolo {
 			return isBuilt;
 		}
 
-		public void setBuilt(boolean isBuilt) {
+		public synchronized void setBuilt(boolean isBuilt) {
 			this.isBuilt = isBuilt;
 		}
 		

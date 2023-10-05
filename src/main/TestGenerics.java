@@ -67,7 +67,6 @@ public class TestGenerics  {
 		@Override
 		public void run() {
 			//Oggetto a cui si vuole che i thread non accedano contemporaneamente --> synchronized
-			//			synchronized (this.listaPezzi) {
 			try {
 				this.listaPezzi.stream().forEach(pezzoQuantita -> {
 					System.out.println("Start thread secondario per "+ this.tipoVeicolo + " - " + 
@@ -85,7 +84,6 @@ public class TestGenerics  {
 			}
 			System.out.println("finito thread per " + this.tipoVeicolo);
 		}
-		//		}
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -130,7 +128,7 @@ public class TestGenerics  {
 		executor.submit(new  MyThread(catenaMontaggioAuto, listaPezzi, auto, auto.getTipoVeicolo()));
 		executor.submit(new  MyThread(catenaMontaggioMoto, listaPezzi, moto, moto.getTipoVeicolo() ));
 		executor.submit(new  MyThread(catenaMontaggioCamion, listaPezzi, camion, camion.getTipoVeicolo()));
-//		executor.submit(new  MyThread(catenaMontaggioAuto, listaPezzi, auto, auto.getTipoVeicolo()));
+		executor.submit(new  MyThread(catenaMontaggioAuto, listaPezzi, auto, auto.getTipoVeicolo()));
 
 
 		//Shutdown del threadpool
@@ -193,6 +191,7 @@ public class TestGenerics  {
 			pw.close();
 		}
 	}
+	
 
 	/**
 	 * 
